@@ -15,8 +15,8 @@
   "bugs": {
     "url": "https://github.com/theykay/readme-gen/issues"
   },
-  "homepage": "https://github.com/theykay/readme-gen#readme",
+  "homepage": "https://theykay.github.io/readme-gen",
   "dependencies": {
-    "inquirer": "^6.5.0"
+    "inquirer": "^7.3.3"
   }
 }
