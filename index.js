@@ -2,7 +2,7 @@ const fs = require("fs");
 const inquirer = require("inquirer");
 const util = require("util");
 
-// const writeFileAsync = util.promisify(fs.writeFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
 const multiline = {
     describe: [],
@@ -21,136 +21,102 @@ const multiline = {
 // //     unlicense: 
 // // }
 
-// const question1 = [
-//     {
-//         type: "input",
-//         name: "name",
-//         message: "What is the name of this project?"
-//     }];
-
-const questionMulti = [
+const questions = [
     // 0
     {
         type: "input",
-        name: "describe",
-        message: "Please enter a description of this project"
+        name: "name",
+        message: "Name of project",
+        default: "name"
     },
     // 1
     {
         type: "input",
-        name: "install",
-        message: "Installation instructions"
+        name: "describe",
+        message: "Description of project",
+        default: "description"
     },
     // 2
     {
         type: "input",
-        name: "use",
-        message: "Instructions and examples for use"
+        name: "install",
+        message: "Installation instructions",
+        default: "installation instructions"
     },
     // 3
     {
-        type: 'confirm',
-        name: 'askAgain',
-        message: 'Enter another line?',
-        default: false,
+        type: "input",
+        name: "use",
+        message: "Instructions and examples for use",
+        default: "Instructions and examples for use"
+    },
+    // 4
+    {
+        type: "input",
+        name: "image",
+        message: "screenshot doc name (with filepath relative to readme)",
+        default: "Image-path"
+    },
+    // 5
+    {
+        type: "input",
+        name: "imageAlt",
+        message: "Description of screenshot",
+        default: "image alt"
+    },
+    // 6
+    {
+        type: "input",
+        name: "contribution",
+        message: "Contribution guidelines",
+        default: "contribution guidelines"
+    },
+    // 7
+    {
+        type: "input",
+        name: "test",
+        message: "Test instructions",
+        default: "test instructions"
+    },
+    // 8
+    {
+        type: "input",
+        name: "creator",
+        message: "Name to appear on license",
+        default: "name on license"
+    },
+    // 9
+    {
+        type: "list",
+        name: "license",
+        message: "Pick a license to use:",
+        choices: [1, 2, 3, 4, 5, 6],
+        default: 1
+    },
+    // 10
+    {
+        type: "input",
+        name: "github",
+        message: "Github username",
+        default: "github"
+    },
+    // 11
+    {
+        type: "input",
+        name: "email",
+        message: "Email address",
+        default: "address@mail.com"
     }
 ];
 
-// const question2 = [
-//     // 0
-//     {
-//         type: "input",
-//         name: "image",
-//         message: "Filepath to the screenshot (relative to the readme location)"
-//     },
-//     // 1
-//     {
-//         type: "input",
-//         mame: "imageAlt",
-//         message: "Description of screenshot"
-//     },
-//     // 2
-//     {
-//         type: "input",
-//         name: "contribution",
-//         message: "Contribution guidelines"
-//     },
-//     // 3
-//     {
-//         type: "input",
-//         name: "test",
-//         message: "Test instructions"
-//     },
-//     // 4
-//     {
-//         type: "input",
-//         name: "creator",
-//         message: "Name to appear on license"
-//     },
-//     // 5
-//     {
-//         type: "list",
-//         name: "license",
-//         message: "Pick a license to use:",
-//         choices: [1, 2, 3, 4, 5, 6]
-//     },
-//     // 6
-//     {
-//         type: "input",
-//         name: "github",
-//         message: "Github username"
-//     }
-// ];
-
-// inquirer.prompt(question1)
-//     .then(multiLine(0, "describe"))
-//     .then(multiLine(1, "install"))
-//     .then(multiLine(2, "use"))
-//     .then(inquirer.prompt(question2));
-
-inquirer.prompt([
-    {
-        type: "input",
-        name: "name",
-        message: "Name of project"
-    }
-])
-
-function multi(index, key) {
-    let array;
-    let answer;
-    inquirer.prompt(questionMulti[index]).then((answers) => {
-        if (key === "describe") {
-            array = multiline.describe;
-            answer = answers.description;
-        } else if (key === "install") {
-            array = multiline.install;
-            answer = answers.install;
-        } else if (key === "use") {
-            array = multiline.use;
-            answer = answers.use;
-        };
-        array.push(answer);
-        inquirer.prompt([
-            {
-                type: 'confirm',
-                name: 'askAgain',
-                message: 'Enter another line?',
-                default: false
-            }
-        ]).then((ans) => {
-            if (ans.askAgain) {
-                multi(index, key);
-            };
-        });
-    });
-};
-
-const template = `
-#${questions.name}
+inquirer
+.prompt(questions)
+.then((answers) => {
+    const template = `# ${answers.name}
 
 ## Description
-${multiline.describe.join('\n')}
+![${answers.imageAlt}](${answers.image})
+${answers.describe}
 
 ## Table of Contents
 * [Installation](#installation)
@@ -160,19 +126,22 @@ ${multiline.describe.join('\n')}
 * [License](#license)
 
 ## Installation
-${multiline.install.join('\n')}
+${answers.install}
 
 ## Usage
-${multiline.use.join('\n')}
+${answers.use}
 
 ## License
 
 ## Contribution Guidelines
-${questions.contribution}
+${answers.contribution}
 
 ## Test Instructions
-${questions.test}
+${answers.test}
 
-## Questions
-Github: [${questions.github}](https://github.com/${questions.github})
+## answers
+Github: [${answers.github}](https://github.com/${answers.github})
+Email: [${answers.email}](mailto:${answers.email})
 `
+    writeFileAsync("readme.md", template);
+})
