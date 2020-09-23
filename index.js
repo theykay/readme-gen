@@ -3,6 +3,8 @@ const inquirer = require("inquirer");
 const util = require("util");
 
 const writeFileAsync = util.promisify(fs.writeFile);
+const copyFileAsync = util.promisify(fs.copyFile);
+const mkDirAsync = util.promisify(fs.mkdir);
 
 const multiline = {
     describe: [],
@@ -32,11 +34,11 @@ const badges = {
     unlicense: `[![License: Unlicense](https://img.shields.io/badge/License-Unlicense-green.svg)](https://unlicense.org/)`
 };
 
-const year = today.getFullYear();
+let d = new Date();
+const year = d.getFullYear();
 let name;
 
-const licenses = {
-    mit: `MIT License
+const mitLicense = `MIT License
 
 Copyright (c) ${year} ${name}
 
@@ -56,15 +58,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`,
-    gnuA3: "GNUAGPLv3.txt",
-    gnuG3: "GNUGPLv3.txt",
-    gnuL3: "GNULGPLv3.txt",
-    mozilla: "Mozilla.txt",
-    apache: "Apache2.txt",
-    boost: "Boost.txt",
-    unlicense: "Unlicense.txt"
-}
+SOFTWARE.`;
 
 
 
@@ -144,7 +138,7 @@ const questions = [
         type: "list",
         name: "license",
         message: "Pick a license to use:",
-        choices: ["MIT", "GNU AGPLv3", "GNU GPLv3", "GNU LGPLv3", "Mozilla Public License 2.0", "Apache License 2.0", "Boost Software License 1.0", "The Unclicense"]
+        choices: ["MIT License", "GNU AGPLv3 License", "GNU GPLv3 License", "GNU LGPLv3 License", "Mozilla Public License 2.0", "Apache License 2.0", "Boost Software License 1.0", "The Unclicense"]
     },
     // 11
     {
@@ -162,39 +156,68 @@ const questions = [
     }
 ];
 
+mkDirAsync("./package").catch((err) => 
+{
+    if (err) {
+        console.log(`oops, there's already a folder named "package", please delete it and try again`);
+        throw err;
+    }
+});
 inquirer
 .prompt(questions)
 .then((answers) => {
-    fs.mkdir("./package");
     name = answers.creator;
     multiline.install.push(answers.install);
     multiline.describe.push(answers.describe);
     multiline.use.push(answers.use);
 
-    const licenseChoice = {
-        badge: "",
-        path: ""
-    }
-    if (answers.license === "MIT") {
-        writeFileAsync("license.txt", licenses.MIT);
+    let licenseBadge;
 
-    } else if (answers.license === "GNU AGPLv3") {
-        
-    } else if (answers.license === "GNU GPLv3") {
-        
-    } else if (answers.license === "GNU LGPLv3") {
-        
-    } else if (answers.license === "Mozilla Public License 2.0") {
-        
-    } else if (answers.license === "Apache License 2.0") {
-        
-    } else if (answers.license === "Boost Software License 1.0") {
-        
-    } else if (answers.license === "The Unclicense") {
-        
+    if (answers.license === "MIT License") {
+        writeFileAsync("./package/license.txt", mitLicense).catch((err) => 
+        {
+            if (err) {
+                console.log("write file problem")
+                throw err;
+            }
+        });
+        licenseBadge = badges.mit;
+    } else {
+        let filePath;
+        if (answers.license === "GNU AGPLv3 License") {
+            filePath = "./licenses/GNUAGPLv3.txt";
+            licenseBadge = badges.gnuA3;
+        } else if (answers.license === "GNU GPLv3 License") {
+            filePath = "./licenses/GNUGPLv3.txt";
+            licenseBadge = badges.gnuG3;
+        } else if (answers.license === "GNU LGPLv3 License") {
+            filePath = "./licenses/GNULGPLv3.txt";
+            licenseBadge = badges.gnuL3;
+        } else if (answers.license === "Mozilla Public License 2.0") {
+            filePath = "./licenses/Mozilla.txt";
+            licenseBadge = badges.mozilla;
+        } else if (answers.license === "Apache License 2.0") {
+            filePath = "./licenses/Apache2.txt";
+            licenseBadge = badges.apache;
+        } else if (answers.license === "Boost Software License 1.0") {
+            filePath = "./licenses/Boost.txt";
+            licenseBadge = badges.boost;
+        } else if (answers.license === "The Unclicense") {
+            filePath = "./licenses/Unlicense.txt";
+            licenseBadge = badges.unlicense;
+        }
+        copyFileAsync(filePath, "./package/license.txt").catch((err) => 
+        {
+            if (err) {
+                console.log("copy file problem")
+                throw err;
+            }
+        }
+    );
     }
 
     const template = `# ${answers.name}
+${licenseBadge}
 
 ## Description
 ![${answers.imageAlt}](${answers.image})
@@ -208,23 +231,29 @@ ${answers.describe}
 * [License](#license)
 
 ## Installation
-${answers.install}
+\`${answers.install}\`
 
 ## Usage
-${answers.use}
+\`${answers.use}\`
 
 ## License
-${}
+This application covered under the ${answers.license}
 
 ## Contribution Guidelines
 ${answers.contribution}
 
 ## Test Instructions
-${answers.test}
+\`${answers.test}\`
 
 ## answers
 Github: [${answers.github}](https://github.com/${answers.github})
 Email: [${answers.email}](mailto:${answers.email})
 `
-    writeFileAsync("readme.md", template);
+    writeFileAsync("./package/readme.md", template).catch((err) => 
+    {
+        if (err) {
+            console.log("write file problem")
+            throw err;
+        }
+    });
 })
