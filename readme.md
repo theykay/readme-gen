@@ -17,7 +17,7 @@ Javascript application to generate a readme markup document based on user input 
 
 ## Usage
 `node index.js`
-![walkthrough video](./assets/readme-walkthrough.mov)
+![walkthrough video](./assets/readme-walkthrough.mp4)
 ![result](./assets/readme-result.png)
 
 ## License
