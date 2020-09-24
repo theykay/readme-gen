@@ -149,11 +149,20 @@ const questions = [
     // 12
     {
         type: "input",
+        name: "repo",
+        message: "Repository name on github",
+        default: "repo"
+    },
+    // 13
+    {
+        type: "input",
         name: "email",
         message: "Email address",
         default: "address@mail.com"
     }
 ];
+
+console.log("Welcome to the readme generator! Answer the following prompts to generate a readme md document for your project");
 
 mkDirAsync("./package").catch((err) => 
 {
@@ -237,8 +246,11 @@ SOFTWARE.`;
     }
 
     const template = `# ${answers.name}
+[![project-languages-used](https://img.shields.io/github/languages/count/:${answers.github
+    .trim()
+    .toLowerCase()}/:${answers.repo.trim()}?color=important)](https://github.com/${answers.github.trim().toLowerCase()}/${answers.repo.trim()})
 ${licenseBadge}
-
+            
 ## Description
 ${answers.describe}
 
@@ -278,3 +290,4 @@ Email: [${answers.email}](mailto:${answers.email})
         }
     });
 })
+.then(() => {console.log("Complete! Check the folder 'package' for readme and license")})
