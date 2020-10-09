@@ -246,9 +246,12 @@ SOFTWARE.`;
     }
 
     const template = `# ${answers.name}
-[![project-languages-used](https://img.shields.io/github/languages/count/:${answers.github
+[![project-languages-used](https://img.shields.io/github/languages/count/${answers.github
     .trim()
-    .toLowerCase()}/:${answers.repo.trim()}?color=important)](https://github.com/${answers.github.trim().toLowerCase()}/${answers.repo.trim()})
+    .toLowerCase()}/${answers.repo.trim()}?color=important)](https://github.com/${answers.github.trim().toLowerCase()}/${answers.repo.trim()})
+[![project-top-languages-used](https://img.shields.io/github/languages/top/${answers.github
+    .trim()
+    .toLowerCase()}/${answers.repo.trim()}?color=important)](https://github.com/${answers.github.trim().toLowerCase()}/${answers.repo.trim()})
 ${licenseBadge}
             
 ## Description
