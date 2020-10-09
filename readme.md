@@ -1,5 +1,6 @@
 # Readme Generator
-[![project-languages-used](https://img.shields.io/github/languages/count/:theykay/:readme-gen?color=important)](https://github.com/theykay/readme-gen)
+[![project-languages-used](https://img.shields.io/github/languages/count/theykay/readme-gen?color=important)](https://github.com/theykay/readme-gen)
+[![project-top-languages-used](https://img.shields.io/github/languages/top/theykay/readme-gen?color=important)](https://github.com/theykay/readme-gen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
             
 ## Description
